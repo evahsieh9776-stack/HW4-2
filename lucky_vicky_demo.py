@@ -272,9 +272,8 @@ if __name__ == "__main__":
     print("\n按 Ctrl+C 停止應用\n")
     
     # 启动应用
+    # 云端部署时使用默认配置，本地运行时可以指定端口
     demo.launch(
-        server_name="127.0.0.1",  # 本地访问
-        server_port=7860,          # 端口
         share=False,               # 不创建公开链接
         show_error=True,           # 显示错误
         quiet=False                # 显示日志
