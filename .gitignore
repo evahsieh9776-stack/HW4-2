@@ -1,0 +1,318 @@
+# ============================================
+# Hugging Face 项目 .gitignore
+# ============================================
+
+# ============================================
+# 🔒 敏感信息 - 绝对不要上传!
+# ============================================
+
+# API Tokens 和密钥
+.env
+*.env
+.env.local
+.env.*.local
+
+# API Keys
+*_api_key*
+*_token*
+*_secret*
+
+# Hugging Face Token
+hf_token.txt
+
+# ============================================
+# 🐍 Python
+# ============================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# pdm
+.pdm.toml
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# ============================================
+# 💻 IDE / 编辑器
+# ============================================
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# ============================================
+# 🖥️ 操作系统
+# ============================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ============================================
+# 📦 项目特定
+# ============================================
+
+# Gradio 缓存
+gradio_cached_examples/
+flagged/
+
+# Hugging Face 缓存
+.cache/
+huggingface/
+
+# 模型文件 (太大)
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+models/
+
+# 数据文件
+data/
+datasets/
+*.csv
+*.json
+*.jsonl
+*.parquet
+
+# 日志文件
+logs/
+*.log
+
+# 临时文件
+tmp/
+temp/
+*.tmp
+
+# 测试输出
+test_output/
+output/
+
+# ============================================
+# 📝 文档和笔记 (可选)
+# ============================================
+
+# 个人笔记 (如果不想分享)
+# notes/
+# TODO.md
+# PRIVATE.md
+
+# 对话记录 (包含敏感信息)
+*对话紀錄*.md
+*对话记录*.txt
+*conversation*.md
+
+# ============================================
+# 🎨 媒体文件 (可选)
+# ============================================
+
+# 图片 (如果太大)
+# *.jpg
+# *.jpeg
+# *.png
+# *.gif
+
+# 视频
+*.mp4
+*.avi
+*.mov
+
+# 音频
+*.mp3
+*.wav
+
+# ============================================
+# 📊 其他
+# ============================================
+
+# 压缩文件
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# 备份文件
+*.bak
+*.backup
+*~
+
+# Node modules (如果有前端)
+node_modules/
+package-lock.json
+yarn.lock
+
+# ============================================
+# ✅ 允许的文件
+# ============================================
+
+# 确保这些文件被包含
+!.env.template
+!.gitignore
+!README.md

@@ -1,0 +1,257 @@
+"""
+🤗 Hugging Face Inference API - 快速参考卡片
+============================================
+
+📌 第一步:安装
+--------------
+!pip install huggingface_hub
+
+
+📌 第二步:获取 Token
+--------------------
+1. 访问: https://huggingface.co/settings/tokens
+2. 创建 Read token
+3. 在 Colab 左侧 🔑 添加 Secret:
+   - Name: HuggingFace
+   - Value: 你的 token
+
+
+📌 第三步:基础设置
+------------------
+from huggingface_hub import InferenceClient
+from google.colab import userdata
+
+hf_token = userdata.get('HuggingFace')
+client = InferenceClient(token=hf_token)
+
+
+📌 常用代码片段
+--------------
+
+1️⃣ 简单对话
+------------
+messages = [
+    {"role": "system", "content": "你是友善的助手,用繁体中文回答"},
+    {"role": "user", "content": "你好"}
+]
+
+response = client.chat_completion(
+    messages=messages,
+    model="Qwen/Qwen2.5-7B-Instruct",
+    max_tokens=200
+)
+
+print(response.choices[0].message.content)
+
+
+2️⃣ Lucky Vicky 生成器
+----------------------
+def lucky_post_hf(event):
+    system = '''請用台灣習慣的中文來寫這段 po 文:
+請用員瑛式思考, 也就是什麼都正向思維任何使用者寫的事情,
+用我的第一人稱、社群媒體 po 文的口吻說一次,
+說為什麼這是一件超幸運的事, 並且以「完全是 Lucky Vicky 呀!」結尾。
+可以適度的加上 emoji。'''
+    
+    messages = [
+        {"role": "system", "content": system},
+        {"role": "user", "content": event}
+    ]
+    
+    response = client.chat_completion(
+        messages=messages,
+        model="Qwen/Qwen2.5-7B-Instruct",
+        max_tokens=500,
+        temperature=0.8
+    )
+    
+    return response.choices[0].message.content
+
+# 使用
+result = lucky_post_hf("今天咖啡灑了")
+print(result)
+
+
+3️⃣ 文本生成
+------------
+response = client.text_generation(
+    prompt="台灣最有名的小吃是",
+    model="Qwen/Qwen2.5-1.5B-Instruct",
+    max_new_tokens=100
+)
+print(response)
+
+
+4️⃣ 翻译
+--------
+def translate(text, target="繁體中文"):
+    messages = [
+        {"role": "system", "content": f"翻译成{target}"},
+        {"role": "user", "content": text}
+    ]
+    response = client.chat_completion(
+        messages=messages,
+        model="Qwen/Qwen2.5-7B-Instruct",
+        max_tokens=200
+    )
+    return response.choices[0].message.content
+
+print(translate("Hello world"))
+
+
+5️⃣ 情感分析
+------------
+def sentiment(text):
+    messages = [
+        {"role": "system", "content": "分析情感,只回答:正面/负面/中性"},
+        {"role": "user", "content": f"分析: {text}"}
+    ]
+    response = client.chat_completion(
+        messages=messages,
+        model="Qwen/Qwen2.5-1.5B-Instruct",
+        max_tokens=20
+    )
+    return response.choices[0].message.content
+
+print(sentiment("這個產品太棒了!"))
+
+
+6️⃣ 流式输出
+------------
+messages = [{"role": "user", "content": "講個故事"}]
+
+for token in client.chat_completion(
+    messages=messages,
+    model="Qwen/Qwen2.5-1.5B-Instruct",
+    max_tokens=200,
+    stream=True
+):
+    print(token.choices[0].delta.content, end="", flush=True)
+
+
+📌 推荐模型
+-----------
+| 模型 | 大小 | 速度 | 中文能力 | 用途 |
+|------|------|------|----------|------|
+| Qwen/Qwen2.5-1.5B-Instruct | 小 | 快 | ⭐⭐⭐ | 测试、简单任务 |
+| Qwen/Qwen2.5-7B-Instruct | 中 | 中 | ⭐⭐⭐⭐⭐ | Lucky Vicky、翻译 |
+| Qwen/Qwen2.5-72B-Instruct | 大 | 慢 | ⭐⭐⭐⭐⭐ | 复杂任务 |
+| meta-llama/Llama-3.1-8B-Instruct | 中 | 中 | ⭐⭐⭐⭐ | 通用对话 |
+
+
+📌 重要参数
+-----------
+max_tokens: 生成的最大 token 数
+  - 短回复: 50-100
+  - 中等: 200-300
+  - 长文: 500-1000
+
+temperature: 创意程度
+  - 0.1-0.3: 确定、一致
+  - 0.7-0.9: 有创意 (推荐)
+  - 1.0+: 非常随机
+
+top_p: 采样范围
+  - 0.9: 平衡 (默认)
+  - 0.95: 更多样
+
+
+📌 错误处理
+-----------
+try:
+    response = client.chat_completion(...)
+except Exception as e:
+    print(f"错误: {e}")
+    # 可以切换备用模型
+
+
+📌 与 Gradio 集成
+-----------------
+import gradio as gr
+
+def process(text, provider):
+    if provider == "Hugging Face":
+        messages = [{"role": "user", "content": text}]
+        response = client.chat_completion(
+            messages=messages,
+            model="Qwen/Qwen2.5-7B-Instruct",
+            max_tokens=300
+        )
+        return response.choices[0].message.content
+    # ... 其他提供商
+
+with gr.Blocks() as demo:
+    input_text = gr.Textbox(label="输入")
+    provider = gr.Dropdown(["Hugging Face", "Groq"], label="模型")
+    output = gr.Textbox(label="输出")
+    btn = gr.Button("提交")
+    btn.click(process, [input_text, provider], output)
+
+demo.launch(share=True)
+
+
+📌 常见问题
+-----------
+Q: 需要付费吗?
+A: 免费使用,但有速率限制。付费可获得更高限制。
+
+Q: 可以离线使用吗?
+A: Inference API 需要网络。离线请用 transformers 下载模型。
+
+Q: 支持哪些语言?
+A: Qwen 模型对中文支持最好,Llama 支持多语言。
+
+Q: 如何提高速度?
+A: 使用小模型 (1.5B),减少 max_tokens,或使用 Groq。
+
+
+📌 完整示例:多提供商 Lucky Vicky
+---------------------------------
+def lucky_vicky(event, provider="hf"):
+    system = "員瑛式思考提示词..."
+    
+    if provider == "hf":
+        messages = [
+            {"role": "system", "content": system},
+            {"role": "user", "content": event}
+        ]
+        response = client.chat_completion(
+            messages=messages,
+            model="Qwen/Qwen2.5-7B-Instruct",
+            max_tokens=500,
+            temperature=0.8
+        )
+        return response.choices[0].message.content
+    
+    elif provider == "groq":
+        return reply(system=system, prompt=event, 
+                    provider="groq", model="openai/gpt-oss-120b")
+
+# 使用
+print(lucky_vicky("今天遲到了", "hf"))
+
+
+📌 资源链接
+-----------
+- Hugging Face Hub: https://huggingface.co/
+- 获取 Token: https://huggingface.co/settings/tokens
+- 模型库: https://huggingface.co/models
+- API 文档: https://huggingface.co/docs/huggingface_hub
+- Qwen 模型: https://huggingface.co/Qwen
+
+
+📌 下一步
+---------
+1. ✅ 获取 API Token
+2. ✅ 在 Colab 添加 Secret
+3. ✅ 运行基础测试
+4. ✅ 集成到 Lucky Vicky
+5. ✅ 创建 Gradio App
+6. 🚀 部署到 Hugging Face Spaces (可选)
+
+
+============================================
+祝您使用愉快! 🎉
+有问题随时问我!
+============================================
+"""
