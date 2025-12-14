@@ -71,28 +71,35 @@ st.markdown("""
 @st.cache_resource
 def get_hf_client():
     """獲取 Hugging Face 客戶端"""
-    # 優先從 Streamlit secrets 讀取
     hf_token = None
     
-    if hasattr(st, 'secrets') and 'HF_TOKEN' in st.secrets:
-        hf_token = st.secrets['HF_TOKEN']
-    else:
-        # 從環境變數讀取
+    # 1. 優先從 Streamlit secrets 讀取
+    try:
+        hf_token = st.secrets["HF_TOKEN"]
+    except (KeyError, FileNotFoundError):
+        pass
+    
+    # 2. 從環境變數讀取
+    if not hf_token:
         hf_token = os.getenv('HF_TOKEN')
-        
-        # 從 .env 文件讀取
-        if not hf_token:
-            try:
-                with open('.env', 'r', encoding='utf-8') as f:
-                    for line in f:
-                        if line.startswith('HF_TOKEN='):
-                            hf_token = line.strip().split('=', 1)[1]
-                            break
-            except FileNotFoundError:
-                pass
+    
+    # 3. 從 .env 文件讀取 (本地開發用)
+    if not hf_token:
+        try:
+            with open('.env', 'r', encoding='utf-8') as f:
+                for line in f:
+                    if line.startswith('HF_TOKEN='):
+                        hf_token = line.strip().split('=', 1)[1]
+                        break
+        except FileNotFoundError:
+            pass
     
     if hf_token:
-        return InferenceClient(token=hf_token), True
+        try:
+            return InferenceClient(token=hf_token), True
+        except Exception as e:
+            st.error(f"❌ 創建 Hugging Face 客戶端時出錯: {str(e)}")
+            return None, False
     else:
         return None, False
 
