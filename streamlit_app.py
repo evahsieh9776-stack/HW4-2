@@ -98,12 +98,9 @@ def get_hf_client():
         try:
             return InferenceClient(token=hf_token), True
         except Exception as e:
-            st.error(f"❌ 創建 Hugging Face 客戶端時出錯: {str(e)}")
             return None, False
     else:
         return None, False
-
-client, token_available = get_hf_client()
 
 # ============================================
 # Lucky Vicky 生成函數
@@ -168,7 +165,8 @@ def generate_lucky_vicky(event, model_choice):
 st.markdown('<h1 class="main-title">🌈 員瑛式思考生成器</h1>', unsafe_allow_html=True)
 st.markdown('<p class="subtitle">Lucky Vicky - 把任何事情都變成幸運的事!</p>', unsafe_allow_html=True)
 
-# Token 狀態提示
+# Token 狀態提示 (延遲載入)
+client, token_available = get_hf_client()
 if token_available:
     st.success("✅ Hugging Face Token 已配置")
 else:
